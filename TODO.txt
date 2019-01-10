@@ -1,0 +1,5 @@
+// Force new Listen Port if Port already in use 'EADDRINUSE'. OK
+// Add SSH2 Connection Time Out Options. OK
+// Re-connection on SSH2 disconnect by server. OK
+// Figure out what is 'imposed-server limits' mention in https://github.com/mscdex/ssh2#dynamic-11-port-forwarding-using-a-socksv5-proxy-using-socksv5
+// Force close all socks channel.

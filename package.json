@@ -1,0 +1,20 @@
+{
+  "name": "ssh2-dynfor",
+  "version": "0.1.0",
+  "description": "Dynamic Port Forwarding with SSH2 module",
+  "main": "dist/dynfor.js",
+  "scripts": {
+    "test": "jest __tests__/test.js --watch"
+  },
+  "author": "hashtafak",
+  "license": "MIT",
+  "dependencies": {
+    "debug": "^4.1.1",
+    "joi": "^14.3.1",
+    "socksv5": "^0.0.6",
+    "ssh2": "^0.7.1"
+  },
+  "devDependencies": {
+    "jest": "^23.6.0"
+  }
+}
