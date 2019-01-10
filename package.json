@@ -1,7 +1,7 @@
 {
   "name": "ssh2-dynfor",
   "version": "0.1.0",
-  "description": "Dynamic Port Forwarding with SSH2 module",
+  "description": "Ssh2 Dynamic Port Forwarding to easy usage of mscdex/ssh2",
   "main": "dist/dynfor.js",
   "scripts": {
     "test": "jest __tests__/test.js --watch"
