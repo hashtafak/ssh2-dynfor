@@ -109,43 +109,37 @@ function Dynfor(sshConfig) {
             .connect(SSH_CONFIG);
     });
 
-    this.StopAccepting = () => {
-        // this._.socks.waitForChannelClose = waitForChannelClose;
-
-        // if (waitForChannelClose) {
-        //     Promise(resolve => this._.socks.stream.on('close', () => {
-        //         resolve();
-        //     }));
-        // }
-
+    this.StopAccepting = () => new Promise((resolve, reject) => {
         if (!this._.socks || !this._.socks.listening) {
-            throw new Error('Not yet listening to the Socks5 Server.');
+            reject(new Error('Not yet listening to the Socks5 Server.'));
         }
 
         DynforDebug(`Stop SOCKS/HTTP proxy forwarding on 127.0.0.1:${SSH_CONFIG.sshForwardPort}.`);
-        return this._.socks.close();
-    };
+        resolve(this._.socks.close());
+    });
 
     this.CloseTunnel = (waitForChannelClose) => {
         // this._.socks.waitForChannelClose = waitForChannelClose;
 
         if (waitForChannelClose) {
-            Promise((resolve) => {
+            new Promise((resolve) => {
                 const interval = setInterval(() => {
                     if (this._.socks.listening === false) {
                         resolve(clearInterval(interval));
                     }
                 }, 1000);
-            });
+            }).then();
         }
 
-        if (!this._.conn) {
-            throw new Error('Not yet connected to the SSH tunnel.');
-        }
+        return new Promise((resolve, reject) => {
+            if (!this._.conn) {
+                reject(new Error('Not yet connected to the SSH tunnel.'));
+            }
 
-        this._.conn.endByUser = true;
-        DynforDebug("Session disconnected on user's request.");
-        return this._.conn.end();
+            this._.conn.endByUser = true;
+            DynforDebug("Session disconnected on user's request.");
+            resolve(this._.conn.end());
+        });
     };
 }
 

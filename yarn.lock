@@ -18,10 +18,10 @@
     esutils "^2.0.2"
     js-tokens "^4.0.0"
 
-"@hashtafak/socksv5@^0.0.6":
-  version "0.0.6-a"
-  resolved "https://registry.yarnpkg.com/@hashtafak/socksv5/-/socksv5-0.0.6-a.tgz#2dd4da773929604f728970dabab0449304e8ff48"
-  integrity sha512-r8u+dD2vmOnvle5d/p2sLM98WgIq0hQBYLCTgJUmGr2e9SIba0ieW8n2TDGbURRMwmFympAKCxK1lTY1BEThpg==
+"@hashtafak/socksv5@^0.0.6c":
+  version "0.0.6-c"
+  resolved "https://registry.yarnpkg.com/@hashtafak/socksv5/-/socksv5-0.0.6-c.tgz#c056d78529a227a6ee4d4b883bb9d2b039a4696e"
+  integrity sha512-PdehVoxnHciby/LEOTbd2+pYvLI2D+wAxH+RxqprR5oTY1ziZNQod2mnt/jqCUPqNJwtJ8k4bc8cxtr9RXQfog==
   dependencies:
     ipv6 "*"
 

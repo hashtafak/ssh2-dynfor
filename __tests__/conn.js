@@ -21,5 +21,7 @@ const Dynfor = require('../dist/dynfor');
         } catch (e) {
             console.log(e);
         }
+
+        process.exit(0);
     }, 5000);
 })();
