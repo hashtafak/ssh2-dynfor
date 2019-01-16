@@ -18,10 +18,9 @@ const Dynfor = require('../dist/dynfor');
         try {
             await conn.StopAccepting();
             await conn.CloseTunnel(true);
+            process.exit(0);
         } catch (e) {
             console.log(e);
         }
-
-        process.exit(0);
     }, 5000);
 })();

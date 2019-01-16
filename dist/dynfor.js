@@ -118,29 +118,27 @@ function Dynfor(sshConfig) {
         resolve(this._.socks.close());
     });
 
-    this.CloseTunnel = (waitForChannelClose) => {
+    this.CloseTunnel = waitForChannelClose => new Promise((resolve, reject) => {
         // this._.socks.waitForChannelClose = waitForChannelClose;
 
         if (waitForChannelClose) {
-            new Promise((resolve) => {
+            new Promise((rs) => {
                 const interval = setInterval(() => {
                     if (this._.socks.listening === false) {
-                        resolve(clearInterval(interval));
+                        rs(clearInterval(interval));
                     }
                 }, 1000);
             }).then();
         }
 
-        return new Promise((resolve, reject) => {
-            if (!this._.conn) {
-                reject(new Error('Not yet connected to the SSH tunnel.'));
-            }
+        if (!this._.conn) {
+            reject(new Error('Not yet connected to the SSH tunnel.'));
+        }
 
-            this._.conn.endByUser = true;
-            DynforDebug("Session disconnected on user's request.");
-            resolve(this._.conn.end());
-        });
-    };
+        this._.conn.endByUser = true;
+        DynforDebug("Session disconnected on user's request.");
+        resolve(this._.conn.end());
+    });
 }
 
 module.exports = Dynfor;
