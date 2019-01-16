@@ -1,4 +1,4 @@
-const socks = require('socksv5');
+const socks = require('@hashtafak/socksv5');
 const debug = require('debug');
 const SshClient = require('ssh2').Client;
 const validateConfig = require('./config');

@@ -18,6 +18,13 @@
     esutils "^2.0.2"
     js-tokens "^4.0.0"
 
+"@hashtafak/socksv5@^0.0.6":
+  version "0.0.6-a"
+  resolved "https://registry.yarnpkg.com/@hashtafak/socksv5/-/socksv5-0.0.6-a.tgz#2dd4da773929604f728970dabab0449304e8ff48"
+  integrity sha512-r8u+dD2vmOnvle5d/p2sLM98WgIq0hQBYLCTgJUmGr2e9SIba0ieW8n2TDGbURRMwmFympAKCxK1lTY1BEThpg==
+  dependencies:
+    ipv6 "*"
+
 abab@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/abab/-/abab-2.0.0.tgz#aba0ab4c5eee2d4c79d3487d85450fb2376ebb0f"
@@ -3153,13 +3160,6 @@ snapdragon@^0.8.1:
     source-map "^0.5.6"
     source-map-resolve "^0.5.0"
     use "^3.1.0"
-
-socksv5@^0.0.6:
-  version "0.0.6"
-  resolved "https://registry.yarnpkg.com/socksv5/-/socksv5-0.0.6.tgz#1327235ff7e8de21ac434a0a579dc69c3f071061"
-  integrity sha1-EycjX/fo3iGsQ0oKV53GnD8HEGE=
-  dependencies:
-    ipv6 "*"
 
 source-map-resolve@^0.5.0:
   version "0.5.2"
