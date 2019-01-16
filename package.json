@@ -1,6 +1,6 @@
 {
   "name": "ssh2-dynfor",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Ssh2 Dynamic Port Forwarding to easy usage of mscdex/ssh2",
   "main": "dist/dynfor.js",
   "scripts": {
@@ -11,7 +11,7 @@
   "dependencies": {
     "debug": "^4.1.1",
     "joi": "^14.3.1",
-    "socksv5": "^0.0.6",
+    "hashtafak@socksv5": "^0.0.6",
     "ssh2": "^0.7.1"
   },
   "devDependencies": {
