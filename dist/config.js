@@ -1,10 +1,12 @@
 const joi = require('joi');
 
 // reconnection
+//
 // reconnection.type {Number}
 // 0 - disabled
 // 1 - automatically reconnect if sucessful connections break; (default)
 // 2 - always reconnect atomatically
+//
 // reconnection.firstReconnectionTimeout {Number}
 // 2 - (default)
 // If the specified timeout is 60s or longer,
@@ -28,6 +30,7 @@ const configSchema = joi.object({
     username: joi.string()
         .required(),
     password: joi.string()
+        .allow('')
         .required(),
     sshForwardPort: joi.number()
         .min(1)
