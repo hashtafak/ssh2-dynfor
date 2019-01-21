@@ -7,12 +7,13 @@ class Dynfor {
     constructor(sshConfig) {
         this.SSH_CONFIG = validateConfig(sshConfig);
         this.DynforDebug = debug(`dynfor:${this.SSH_CONFIG.sshForwardPort || 0}`);
+        this.DynforDebugSocks = debug(`dynfor:${this.SSH_CONFIG.sshForwardPort || 0}:socks`);
         this.DynforDebug(this.SSH_CONFIG);
         this._ = {};
     }
 
     Connect() {
-        return new Promise((resl, reject) => {
+        return new Promise((resolve, reject) => {
             this._.socks = socks;
             this._.conn = new SshClient();
 
@@ -30,15 +31,15 @@ class Dynfor {
                             //     deny();
                             // }
 
-                            this.DynforDebug(`Accepted new proxy connection from ${info.srcAddr}:${info.srcPort} on 127.0.0.1:${this.SSH_CONFIG.sshForwardPort}.`);
+                            this.DynforDebugSocks(`Accepted new proxy connection from ${info.srcAddr}:${info.srcPort} on 127.0.0.1:${this.SSH_CONFIG.sshForwardPort}.`);
                             if (err) {
-                                this.DynforDebug('Failed to open channel for client-to-server SOCKSv5: ', err.message);
+                                this.DynforDebugSocks('Failed to open channel for client-to-server SOCKSv5: ', err.message);
                             } else {
-                                this.DynforDebug(`Started SOCKSv5 proxy request from ${info.srcAddr}:${info.srcPort} on 127.0.0.1:${this.SSH_CONFIG.sshForwardPort} to connect to ${info.dstAddr}:${info.dstPort}.`);
+                                this.DynforDebugSocks(`Started SOCKSv5 proxy request from ${info.srcAddr}:${info.srcPort} on 127.0.0.1:${this.SSH_CONFIG.sshForwardPort} to connect to ${info.dstAddr}:${info.dstPort}.`);
                                 const clientSocket = accept(true);
                                 if (clientSocket) {
                                     stream.pipe(clientSocket).pipe(stream).on('close', () => {
-                                        this.DynforDebug(`Closed channel for client-to-server SOCKSv5 proxy forwarding from ${info.srcAddr}:${info.srcPort} on 127.0.0.1:${this.SSH_CONFIG.sshForwardPort} to ${info.dstAddr}:${info.dstPort}. Bytes sent: ${clientSocket.bytesWritten}, received: ${clientSocket.bytesRead}.`);
+                                        this.DynforDebugSocks(`Closed channel for client-to-server SOCKSv5 proxy forwarding from ${info.srcAddr}:${info.srcPort} on 127.0.0.1:${this.SSH_CONFIG.sshForwardPort} to ${info.dstAddr}:${info.dstPort}. Bytes sent: ${clientSocket.bytesWritten}, received: ${clientSocket.bytesRead}.`);
                                     });
                                 }
                             }
@@ -47,22 +48,22 @@ class Dynfor {
                     this._.socks.listening = true;
                     this.SSH_CONFIG.sshForwardPort = this._.socks.address().port;
                     this._.SSH_CONFIG = this.SSH_CONFIG;
-                    this.DynforDebug(`Enabled SOCKS/HTTP proxy forwarding on 127.0.0.1:${this.SSH_CONFIG.sshForwardPort}.`);
-                    resl();
+                    this.DynforDebugSocks(`Enabled SOCKS/HTTP proxy forwarding on 127.0.0.1:${this.SSH_CONFIG.sshForwardPort}.`);
+                    resolve();
                 }).on('error', (e) => {
                     if (this.SSH_CONFIG.sshForwardPortWever && e.code === 'EADDRINUSE') {
-                        this.DynforDebug(`Address 127.0.0.1:${this.SSH_CONFIG.sshForwardPort} already in use, retrying another PORT.`);
+                        this.DynforDebugSocks(`Address 127.0.0.1:${this.SSH_CONFIG.sshForwardPort} already in use, retrying another PORT.`);
 
                         setTimeout(() => {
                             this._.socks.listen(0, 'localhost');
                         }, 1000);
                     } else {
-                        this.DynforDebug(`Failed to enable SOCKS/HTTP proxy forwarding on 127.0.0.1:${this.SSH_CONFIG.sshForwardPort}. Error: ${e.message}`);
+                        this.DynforDebugSocks(`Failed to enable SOCKS/HTTP proxy forwarding on 127.0.0.1:${this.SSH_CONFIG.sshForwardPort}. Error: ${e.message}`);
                         this._.conn.end();
                         reject(e);
                     }
                 }).on('close', () => {
-                    this.DynforDebug(`Stopped SOCKS/HTTP proxy forwarding on 127.0.0.1:${this.SSH_CONFIG.sshForwardPort}.`);
+                    this.DynforDebugSocks(`Stopped SOCKS/HTTP proxy forwarding on 127.0.0.1:${this.SSH_CONFIG.sshForwardPort}.`);
                     this._.socks.listening = false;
                 })
                     .listen(this.SSH_CONFIG.sshForwardPort, 'localhost')
@@ -73,7 +74,7 @@ class Dynfor {
                 this._.conn.end();
 
                 if (this.SSH_CONFIG.reconnection.type === 2) {
-                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    await new Promise(r => setTimeout(r, 1000));
 
                     this.DynforDebug(`Reconnecting to SSH2 server ${this.SSH_CONFIG.host}. Delay: ${this.SSH_CONFIG.readyTimeout}`);
                     // this.StopAccepting();
@@ -93,7 +94,7 @@ class Dynfor {
 
                 if (this._.socks.listening && !this._.conn.endByUser
                         && this.SSH_CONFIG.reconnection.type === 1) {
-                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    await new Promise(r => setTimeout(r, 1000));
 
                     this.DynforDebug(`Reconnecting to SSH2 server 
                         ${this.SSH_CONFIG.host}. Delay: ${this.SSH_CONFIG.readyTimeout}`);
@@ -110,6 +111,8 @@ class Dynfor {
                     }
 
                     await this.Connect().catch(e => this.DynforDebug(`Reconnecting to SSH2 server ${this.SSH_CONFIG.host}. Delay: ${this.SSH_CONFIG.readyTimeout}. Error: ${e}`));
+                } else {
+                    reject(new Error('The SSH2 session has been terminated without reason.'));
                 }
             })
                 .connect(this.SSH_CONFIG);
