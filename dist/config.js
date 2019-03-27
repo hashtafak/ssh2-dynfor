@@ -24,7 +24,23 @@ const reconnectionSchema = joi.object().keys({
         .default(2000),
 });
 
+const ssh = joi.object().keys({
+    host: joi.string()
+        .required(),
+    username: joi.string()
+        .required(),
+    password: joi.string()
+        .allow('')
+        .required(),
+});
+
+const sshList = joi.array().items(ssh);
+
 const configSchema = joi.object({
+    list: sshList.default(sshList.validate([]).value),
+    ParallelConnect: joi.number()
+        .min(2)
+        .default(2),
     host: joi.string()
         .required(),
     username: joi.string()

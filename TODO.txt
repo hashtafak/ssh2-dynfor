@@ -3,3 +3,4 @@
 // Re-connection on SSH2 disconnect by server. OK
 // Figure out what is 'imposed-server limits' mention in https://github.com/mscdex/ssh2#dynamic-11-port-forwarding-using-a-socksv5-proxy-using-socksv5
 // Force close all socks channel.
+// Connect a list of ssh in Promise, resolve the fastest ssh connected successfull using Promise.race()
