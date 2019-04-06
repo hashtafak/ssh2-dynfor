@@ -194,7 +194,7 @@ class Dynfor {
                 this._.conn = race.conn;
 
                 this.DynforDebugSocks('Racer ID', race.id, 'is faster!', this.SSH_CONFIG.list[race.id]);
-                this.SSH_CONFIG.list.push(this.SSH_CONFIG.list.splice(race.id, 1));
+                this.SSH_CONFIG.list.concat(this.SSH_CONFIG.list.splice(race.id, 1));
 
                 this.DynforDebugSocks(this.SSH_CONFIG.list);
 
