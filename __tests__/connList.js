@@ -16,11 +16,11 @@ const Dynfor = require('../dist/dynfor');
             username: ln[1],
             password: ln[2],
         }))
-        .splice(0, 5);
+        .splice(0, 20);
 
     const conn = new Dynfor({
         list,
-        parallelConnect: 2,
+        parallelConnect: 12,
         host: 'null',
         username: 'null',
         password: 'null',
