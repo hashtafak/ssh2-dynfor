@@ -1,10 +1,11 @@
 
 const fs = require('fs');
+const path = require('path');
 const Dynfor = require('../dist/dynfor');
 
 (async () => {
     const list = fs
-        .readFileSync('./ssh.txt', {
+        .readFileSync(path.resolve(__dirname, './n/ssh.txt'), {
             encoding: 'utf8',
         })
         .split(/[\r\n]+/)
@@ -18,7 +19,7 @@ const Dynfor = require('../dist/dynfor');
 
     const conn = new Dynfor({
         list,
-        ParallelConnect: 13,
+        parallelConnect: 13,
         host: 'null',
         username: 'null',
         password: 'null',

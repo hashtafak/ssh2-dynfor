@@ -128,46 +128,48 @@ class Dynfor {
     ConnectList() {
         this.DynforDebug('Total SSH in List: ', this.SSH_CONFIG.list.length);
 
-        const sshList = this.SSH_CONFIG.ParallelConnect < this.SSH_CONFIG.list.length
-            ? this.SSH_CONFIG.list.slice(0, this.SSH_CONFIG.ParallelConnect)
+        const sshList = this.SSH_CONFIG.parallelConnect < this.SSH_CONFIG.list.length
+            ? this.SSH_CONFIG.list.slice(0, this.SSH_CONFIG.parallelConnect)
             : this.SSH_CONFIG.list;
+
+        this.SSH_CONFIG.list = sshList;
 
         this.DynforDebug('Total SSH in use to connect: ', sshList.length);
 
         let isOver = false;
 
-        const promises = sshList.map((ssh, i) => new Promise((resolve) => {
+        const promises = sshList.map((ssh, id) => new Promise((resolve) => {
             const conn = new SshClient();
 
-            this.DynforDebug(i, 'Started a new SSH2 session.');
-            this.DynforDebug(i, `Connecting to SSH2 server ${ssh.host}`);
+            this.DynforDebug(id, 'Started a new SSH2 session.');
+            this.DynforDebug(id, `Connecting to SSH2 server ${ssh.host}`);
 
             let connInterval;
 
             conn
                 .on('ready', () => {
-                    this.DynforDebug(i, 'Connection established.');
+                    this.DynforDebug(id, 'Connection established.');
                     if (isOver === false) {
                         clearInterval(connInterval);
-                        resolve({ conn, i });
+                        resolve({ conn, id });
                     } else {
                         conn.end();
                     }
                 }).on('error', (e) => {
                     clearInterval(connInterval);
-                    this.DynforDebug(i, 'Connection failed. Error:', e.message);
+                    this.DynforDebug(id, 'Connection failed. Error:', e.message);
                     conn.end();
                     // reject(e);
                 }).on('end', () => {
                     clearInterval(connInterval);
-                    this.DynforDebug(i, 'The SSH2 session has been terminated.');
+                    this.DynforDebug(id, 'The SSH2 session has been terminated.');
                     // reject();
                 }).connect(Object.assign(this.SSH_CONFIG, ssh));
 
             connInterval = setInterval(() => {
                 try {
                     if (isOver === true) {
-                        this.DynforDebug(i, 'Dynfor Force Terminate Session.');
+                        this.DynforDebug(id, 'Dynfor Force Terminate Session.');
 
                         clearTimeout(conn._readyTimeout);
                         conn.end();
@@ -177,7 +179,7 @@ class Dynfor {
                     }
                 } catch (e) {
                     // catch e
-                    this.DynforDebug(i, e);
+                    this.DynforDebug(id, e);
                 }
             }, 2000);
         }).catch((e) => {
@@ -191,7 +193,10 @@ class Dynfor {
 
                 this._.conn = race.conn;
 
-                this.DynforDebugSocks('Racer ID', race.i, 'is faster!');
+                this.DynforDebugSocks('Racer ID', race.id, 'is faster!', this.SSH_CONFIG.list[race.id]);
+                this.SSH_CONFIG.list.push(this.SSH_CONFIG.list.splice(race.id, 1));
+
+                this.DynforDebugSocks(this.SSH_CONFIG.list);
 
                 return new Promise((resolve, reject) => {
                     this._.socks = socks;
