@@ -15,11 +15,12 @@ const Dynfor = require('../dist/dynfor');
             host: ln[0],
             username: ln[1],
             password: ln[2],
-        }));
+        }))
+        .splice(0, 5);
 
     const conn = new Dynfor({
         list,
-        parallelConnect: 13,
+        parallelConnect: 2,
         host: 'null',
         username: 'null',
         password: 'null',
@@ -29,17 +30,19 @@ const Dynfor = require('../dist/dynfor');
         keepaliveCountMax: 10,
     });
 
-    await conn.ConnectList();
+    await conn.ConnectList()
+        .then(() => {
+            console.log('DONE');
 
-    console.log('DONE');
-
-    setTimeout(async () => {
-        try {
-            await conn.StopAccepting();
-            await conn.CloseTunnel(true);
-            process.exit(0);
-        } catch (e) {
-            console.log(e);
-        }
-    }, 5000);
+            setTimeout(async () => {
+                try {
+                    await conn.StopAccepting();
+                    await conn.CloseTunnel(true);
+                    process.exit(0);
+                } catch (e) {
+                    console.log(e);
+                }
+            }, 5000);
+        })
+        .catch(c => console.log(c));
 })();

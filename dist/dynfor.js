@@ -138,6 +138,8 @@ class Dynfor {
 
         let isOver = false;
 
+        let promiseDoneCount = 0;
+
         const promises = sshList.map((ssh, id) => new Promise((resolve) => {
             const conn = new SshClient();
 
@@ -159,11 +161,17 @@ class Dynfor {
                     clearInterval(connInterval);
                     this.DynforDebug(id, 'Connection failed. Error:', e.message);
                     conn.end();
-                    // reject(e);
+
+                    promiseDoneCount += 1;
+                    if (promiseDoneCount === sshList.length) {
+                        conn._sock.destroy();
+                        conn.emit('close');
+                        conn.emit('end');
+                        resolve(false);
+                    }
                 }).on('end', () => {
                     clearInterval(connInterval);
                     this.DynforDebug(id, 'The SSH2 session has been terminated.');
-                    // reject();
                 }).connect(Object.assign(this.SSH_CONFIG, ssh));
 
             connInterval = setInterval(() => {
@@ -189,6 +197,12 @@ class Dynfor {
 
         return Promise.race(promises)
             .then((race) => {
+                console.log(race);
+
+                if (race === false) {
+                    throw new Error('Failed to connect all SSH in list.');
+                }
+
                 isOver = true;
 
                 this._.conn = race.conn;
